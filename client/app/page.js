@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { fetchLinks, shortenUrl } from "./utils/api";
+import { useState } from "react";
+import { shortenUrl } from "./utils/api";
 import "./styles/globals.css";
 
 export default function Home() {
@@ -11,26 +11,11 @@ export default function Home() {
   const [copiedUrl, setCopiedUrl] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    loadLinks();
-  }, []);
+  const truncateUrl = (url, maxLength = 30) => 
+    url.length > maxLength ? url.slice(0, maxLength) + "..." : url;
 
-  const loadLinks = async () => {
-    try {
-      const data = await fetchLinks();
-      setLinks(data);
-    } catch (error) {
-      console.error("Error fetching links:", error);
-    }
-  };
-
-  const truncateUrl = (url, maxLength = 30) => {
-    return url.length > maxLength ? url.slice(0, maxLength) + "..." : url;
-  };
-
-  const ensureHttps = (url) => {
-    return url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
-  };
+  const ensureHttps = (url) => 
+    url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
 
   const handleShortenUrl = async () => {
     if (!originalUrl.trim()) return alert("Enter a valid URL");
@@ -41,7 +26,7 @@ export default function Home() {
       const data = await shortenUrl(secureUrl);
       setShortenedUrl(data.short_url);
       setOriginalUrl("");
-      loadLinks();
+      setLinks((prevLinks) => [{ original_url: secureUrl, short_url: data.short_url }, ...prevLinks]);
     } catch (error) {
       alert("Failed to shorten URL");
     } finally {
@@ -62,7 +47,6 @@ export default function Home() {
   return (
     <div className="dark bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-6">
       <h1 className="text-4xl font-bold mb-4 text-blue-300">URL Shortener</h1>
-
       <div className="bg-gray-800 p-6 rounded-lg shadow-md w-full max-w-md">
         <input
           type="text"
@@ -79,7 +63,6 @@ export default function Home() {
           {loading ? "Shortening..." : "Shorten"}
         </button>
       </div>
-
       {shortenedUrl && (
         <div className="mt-4 p-4 bg-gray-800 shadow-md rounded-md flex flex-col items-center">
           <p className="text-green-300">Shortened URL:</p>
@@ -94,11 +77,10 @@ export default function Home() {
           </button>
         </div>
       )}
-
       <h2 className="text-2xl mt-6 mb-2 text-gray-300">Previous Links</h2>
       <ul className="w-full max-w-md">
-        {links.map((link) => (
-          <li key={link.id} className="bg-gray-700 p-3 mb-2 rounded-md">
+        {links.map((link, index) => (
+          <li key={index} className="bg-gray-700 p-3 mb-2 rounded-md">
             <p className="text-sm text-gray-400">{truncateUrl(link.original_url)}</p>
             <div className="flex justify-between items-center">
               <a href={link.short_url} target="_blank" rel="noopener noreferrer" className="text-blue-300 underline">

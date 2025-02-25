@@ -9,16 +9,6 @@ const api = axios.create({
   },
 });
 
-export const fetchLinks = async () => {
-  try {
-    const response = await api.get("/links");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching links", error);
-    throw error;
-  }
-};
-
 export const shortenUrl = async (originalUrl) => {
   try {
     const response = await api.post("/links", { original_url: originalUrl });
