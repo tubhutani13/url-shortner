@@ -19,6 +19,7 @@ class LinksController < ApplicationController
 
     render json: links.map { |link|
       {
+        id: link.id,
         original_url: link.original_url,
         short_url: url_for(controller: 'links', action: 'show', id: link.short_url).to_s,
       }
