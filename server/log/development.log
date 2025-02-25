@@ -1,0 +1,77 @@
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.1ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = ? ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1[0m  [[nil, "environment"]]
+  [1m[36mActiveRecord::InternalMetadata Create (0.1ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('environment', 'development', '2025-02-25 14:05:58.534875', '2025-02-25 14:05:58.534877') RETURNING "key"[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to CreateLinks (20250225140320)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE TABLE "links" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "original_url" varchar, "short_url" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_links_on_short_url" ON "links" ("short_url")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20250225140320') RETURNING "version"[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mLink Load (0.1ms)[0m  [1m[34mSELECT "links".* FROM "links" /* loading for pp */ LIMIT ?[0m  [["LIMIT", 11]]
+Started POST "/links" for 127.0.0.1 at 2025-02-25 19:53:16 +0530
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  
+ActionController::RoutingError (uninitialized constant LinksController
+Did you mean?  LinksControiller):
+  
+Started POST "/links" for 127.0.0.1 at 2025-02-25 19:53:47 +0530
+  
+ActionController::RoutingError (uninitialized constant LinksController
+Did you mean?  LinksControiller):
+  
+Started POST "/links" for 127.0.0.1 at 2025-02-25 19:53:54 +0530
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by LinksController#create as */*
+  Parameters: {"link"=>{"original_url"=>"https://www.google.com"}}
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  ↳ app/models/link.rb:10:in `block in generate_unique_short_url'
+  [1m[36mLink Exists? (0.5ms)[0m  [1m[34mSELECT 1 AS one FROM "links" WHERE "links"."short_url" = ? LIMIT ?[0m  [["short_url", "MEV62W"], ["LIMIT", 1]]
+  ↳ app/models/link.rb:10:in `block in generate_unique_short_url'
+  [1m[36mLink Create (0.4ms)[0m  [1m[32mINSERT INTO "links" ("original_url", "short_url", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["original_url", "https://www.google.com"], ["short_url", "MEV62W"], ["created_at", "2025-02-25 14:23:54.924662"], ["updated_at", "2025-02-25 14:23:54.924662"]]
+  ↳ app/controllers/links_controller.rb:6:in `create'
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mcommit transaction[0m
+  ↳ app/controllers/links_controller.rb:6:in `create'
+Completed 201 Created in 25ms (Views: 0.1ms | ActiveRecord: 2.0ms | Allocations: 46898)
+
+
+Started GET "/MEV62W" for 127.0.0.1 at 2025-02-25 19:54:04 +0530
+Processing by LinksController#show as HTML
+  Parameters: {"id"=>"MEV62W"}
+  [1m[36mLink Load (0.1ms)[0m  [1m[34mSELECT "links".* FROM "links" WHERE "links"."short_url" = ? LIMIT ?[0m  [["short_url", "MEV62W"], ["LIMIT", 1]]
+  ↳ app/controllers/links_controller.rb:35:in `find_link'
+Redirected to https://www.google.com
+Completed 302 Found in 2ms (ActiveRecord: 0.1ms | Allocations: 943)
+
+
+Started GET "/MEV62W" for 127.0.0.1 at 2025-02-25 19:54:21 +0530
+Processing by LinksController#show as */*
+  Parameters: {"id"=>"MEV62W"}
+  [1m[36mLink Load (0.2ms)[0m  [1m[34mSELECT "links".* FROM "links" WHERE "links"."short_url" = ? LIMIT ?[0m  [["short_url", "MEV62W"], ["LIMIT", 1]]
+  ↳ app/controllers/links_controller.rb:35:in `find_link'
+Redirected to https://www.google.com
+Completed 302 Found in 4ms (ActiveRecord: 1.3ms | Allocations: 5124)
+
+
+Started GET "/links" for 127.0.0.1 at 2025-02-25 19:54:37 +0530
+Processing by LinksController#index as */*
+  [1m[36mLink Load (0.4ms)[0m  [1m[34mSELECT "links".* FROM "links" ORDER BY "links"."created_at" DESC[0m
+  ↳ app/controllers/links_controller.rb:20:in `map'
+Completed 500 Internal Server Error in 2ms (ActiveRecord: 0.4ms | Allocations: 1314)
+
+
+  
+NoMethodError (undefined method `short_url' for nil:NilClass):
+  
+app/controllers/links_controller.rb:23:in `block in index'
+app/controllers/links_controller.rb:20:in `map'
+app/controllers/links_controller.rb:20:in `index'
+Started GET "/links" for 127.0.0.1 at 2025-02-25 19:54:52 +0530
+Processing by LinksController#index as */*
+  [1m[36mLink Load (0.0ms)[0m  [1m[34mSELECT "links".* FROM "links" ORDER BY "links"."created_at" DESC[0m
+  ↳ app/controllers/links_controller.rb:20:in `map'
+Completed 200 OK in 10ms (Views: 0.1ms | ActiveRecord: 1.3ms | Allocations: 5538)
+
+
